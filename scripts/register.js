@@ -39,7 +39,7 @@ document.getElementById("google-signin").addEventListener("click", async () => {
         });
 
         // Redirigir a chat
-        window.location.href = "../home/chat.html";
+        window.location.href = "chat.html";
     } catch (error) {
         console.error("Error al iniciar sesión:", error.message);
     }
