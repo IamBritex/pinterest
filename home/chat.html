@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="chat.css">
+    <script type="module" src="../scripts/chat.js" defer></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Barra superior -->
+        <div class="chat-header">
+            <span class="material-icons" id="back-arrow">arrow_back</span>
+            <h1 id="receiver-name" class="waiting-animation"></h1>
+        </div>
+
+        <!-- Contenedor de mensajes -->
+        <div class="chat-messages" id="message-container">
+            <div id="waiting-container" class="waiting">
+                <img src="https://github.githubassets.com/assets/mona-loading-dark-7701a7b97370.gif" alt="Cargando...">
+                <p>Esperando que la segunda persona se registre, vuelve pronto</p>
+            </div>
+        </div>
+
+        <!-- Barra inferior -->
+        <div class="chat-input">
+            <span class="material-icons">add</span>
+            <input type="text" id="message-input" placeholder="Escribe tu mensaje..." disabled>
+            <button id="send-button" class="material-icons" disabled>send</button>
+        </div>
+    </div>
+</body>
+</html>

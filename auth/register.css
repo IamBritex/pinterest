@@ -1,0 +1,55 @@
+:root {
+    --background-general: #07080a;
+    --borders: #15151f;
+    --background-buttons: #1C2022;
+    --secondary-color: #CE262C;
+    --text-color: #ffffff;
+    --button-hover: #35393f;
+}
+
+body {
+    background-color: var(--background-general);
+    color: var(--text-color);
+    font-family: monospace;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    text-align: center;
+    background-color: var(--background-buttons);
+    border: 1px solid var(--borders);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+    font-family: monospace;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.google-button {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    font-family: 'oxigen', monospace;
+    font-size: 1rem;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.google-button:hover {
+    background-color: var(--button-hover);
+}

@@ -1,0 +1,176 @@
+@font-face {
+    font-family: 'nothing';
+    src: url('../fonts/nothing/nothing-font-5x7.ttf') format('truetype');
+  }
+  
+  @font-face {
+    font-family: 'oxigen';
+    src: url('../fonts/oxigen/OxygenMono-Regular.ttf') format('truetype');
+  }
+  
+  :root {
+    --background-general: #07080a;
+    --borders: #15151f;
+    --background-buttons: #1C2022;
+    --secondary-color: #CE262C;
+    --text-color: #ffffff;
+    --waiting-color: #aaaaaa;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'oxigen', monospace;
+    background-color: var(--background-general);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .chat-container {
+    width: 100%;
+    max-width: 600px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--borders);
+  }
+  
+  .chat-header {
+    background-color: var(--background-buttons);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid var(--borders);
+  }
+  
+  .chat-header .material-icons {
+    cursor: pointer;
+    color: var(--secondary-color);
+  }
+  
+  .chat-header h1 {
+    font-size: 1.2rem;
+    margin: 0 auto;
+    text-align: center;
+    color: var(--text-color);
+    position: relative;
+  }
+  
+  .chat-header h1.waiting-animation::after {
+    content: "Esperando.";
+    color: var(--waiting-color);
+    animation: waiting-dots 2s steps(3, end) infinite;
+  }
+  
+  @keyframes waiting-dots {
+    0% {
+      content: "Esperando.";
+    }
+    33% {
+      content: "Esperando..";
+    }
+    66% {
+      content: "Esperando...";
+    }
+    100% {
+      content: "Esperando.";
+    }
+  }
+  
+  .chat-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-general);
+  }
+  
+  .chat-messages .waiting {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+  }
+  
+  .chat-messages .waiting img {
+    width: 100px;
+    margin-bottom: 1rem;
+  }
+  
+  .chat-messages .waiting p {
+    color: var(--waiting-color);
+    font-size: 1rem;
+  }
+  
+  .chat-input {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: var(--background-buttons);
+    border-top: 1px solid var(--borders);
+  }
+  
+  .chat-input .material-icons {
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    cursor: pointer;
+  }
+  
+  .chat-input input {
+    flex: 1;
+    margin: 0 10px;
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid var(--borders);
+    background-color: var(--background-general);
+    color: var(--text-color);
+    outline: none;
+    border-radius: 5px;
+  }
+  
+  .chat-input input:disabled {
+    background-color: var(--background-buttons);
+    color: var(--waiting-color);
+    cursor: not-allowed;
+  }
+  
+  .chat-input button {
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .chat-input button:disabled {
+    color: var(--waiting-color);
+    cursor: not-allowed;
+  }
+  
+  /* Estilos para los mensajes */
+  .message {
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 70%;
+  }
+  
+  .message.sent {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    align-self: flex-end;
+  }
+  
+  .message.received {
+    background-color: var(--background-buttons);
+    color: var(--text-color);
+    align-self: flex-start;
+  }
+  
