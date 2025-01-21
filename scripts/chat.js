@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const sendButton = document.querySelector("#send-button")
   const backArrow = document.querySelector("#back-arrow")
   const receiverName = document.querySelector("#receiver-name")
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
 
   // Global variables
   let currentUser = null
@@ -115,14 +116,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Update header function
   const updateHeader = (isWaiting) => {
+    const waitingContainer = document.getElementById("waiting-container");
+    const waitingMessage = document.getElementById("waiting-message");
+
     if (isWaiting) {
-      receiverName.innerHTML = '<span class="waiting-text">Esperando</span>'
-      receiverName.classList.add("waiting-animation")
+        receiverName.innerHTML = 
+            '<span class="waiting-text" style="color: green;">Esperando un mensaje, ¡vamos! Di "hola!"</span>';
+        receiverName.classList.add("waiting-animation");
+
+        if (waitingContainer) {
+            waitingContainer.style.display = "block"; // Mostrar el contenedor de espera
+        }
+
+        if (waitingMessage) {
+            waitingMessage.textContent = "Esperando un mensaje, ¡vamos! Di \"hola!\"";
+        }
     } else {
-      receiverName.textContent = otherUser?.displayName || "Chat"
-      receiverName.classList.remove("waiting-animation")
+        receiverName.textContent = otherUser?.displayName || "Chat";
+        receiverName.classList.remove("waiting-animation");
+
+        if (waitingContainer) {
+            waitingContainer.style.display = "none"; // Ocultar el contenedor de espera
+        }
     }
-  }
+};
+
+
 
   // Mark messages as read function
   const markMessagesAsRead = async (messages) => {
@@ -140,25 +159,39 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Send message function
   const sendMessage = async (text) => {
-    if (!text.trim() || !otherUser) return
+    if (!text.trim() || !otherUser) return;
 
     try {
-      await addDoc(collection(db, "messages"), {
-        texto: text.trim(),
-        remitente: currentUser.uid,
-        receptor: otherUser.uid,
-        fecha: serverTimestamp(),
-        read: false,
-      })
+        // Obtener el número actual de mensajes enviados por el usuario
+        const userMessagesQuery = query(
+            collection(db, "messages"),
+            where("remitente", "==", currentUser.uid)
+        );
+        const userMessagesSnapshot = await getDocs(userMessagesQuery);
 
-      messageInput.value = ""
-      messageInput.focus()
-      scrollToBottom()
+        // Determinar el número del próximo mensaje
+        const nextMessageNumber = userMessagesSnapshot.size + 1;
+        const messageId = `mensaje ${nextMessageNumber} de ${currentUser.displayName || "Usuario"}`;
+
+        // Guardar el mensaje en la base de datos
+        await addDoc(collection(db, "messages"), {
+            texto: text.trim(),
+            remitente: currentUser.uid,
+            receptor: otherUser.uid,
+            fecha: serverTimestamp(),
+            read: false,
+            messageId, // Almacenar el identificador del mensaje
+        });
+
+        messageInput.value = "";
+        messageInput.focus();
+        scrollToBottom();
     } catch (error) {
-      console.error("Error al enviar mensaje:", error)
-      alert("No se pudo enviar el mensaje. Por favor, intenta de nuevo.")
+        console.error("Error al enviar mensaje:", error);
+        alert("No se pudo enviar el mensaje. Por favor, intenta de nuevo.");
     }
-  }
+};
+
 
   // Setup event listeners function
   const setupEventListeners = () => {
@@ -183,93 +216,93 @@ document.addEventListener("DOMContentLoaded", async () => {
           unsubscribeMessages()
         }
         await signOut(auth)
-        window.location.href = "/"
+        window.location.href = "https://es.pinterest.com/"
       } catch (error) {
         console.error("Error al cerrar sesión:", error)
       }
     })
   }
 
-  // Initialize chat function
-  const initializeChat = async (user) => {
-    try {
-      currentUser = user
+// Initialize chat function
+const initializeChat = async (user) => {
+  try {
+    currentUser = user;
 
-      const usersSnapshot = await getDocs(collection(db, "users"))
-      const users = usersSnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }))
+    const usersSnapshot = await getDocs(collection(db, "users"));
+    const users = usersSnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }));
 
-      otherUser = users.find((u) => u.uid !== currentUser.uid)
+    otherUser = users.find((u) => u.uid !== currentUser.uid);
 
-      if (!otherUser) {
-        updateHeader(true)
-        messageInput.disabled = true
-        sendButton.disabled = true
-        return
-      }
-
-      updateHeader(false)
-      messageInput.disabled = false
-      sendButton.disabled = true
-
-      const messagesQuery = query(
-        collection(db, "messages"),
-        where("remitente", "in", [currentUser.uid, otherUser.uid]),
-        where("receptor", "in", [currentUser.uid, otherUser.uid]),
-        orderBy("fecha", "asc"),
-      )
-
-      unsubscribeMessages = onSnapshot(messagesQuery, async (snapshot) => {
-        const messages = []
-        snapshot.forEach((doc) => {
-          messages.push({
-            id: doc.id,
-            ...doc.data(),
-          })
-        })
-
-        // Ordena los mensajes por fecha antes de agregarlos al DOM
-        messages.sort((a, b) => {
-          const getTime = (timestamp) => {
-            if (timestamp && typeof timestamp.toMillis === "function") {
-              return timestamp.toMillis()
-            } else if (timestamp && timestamp.seconds) {
-              return timestamp.seconds * 1000
-            } else if (timestamp instanceof Date) {
-              return timestamp.getTime()
-            }
-            return 0 // fallback for invalid dates
-          }
-          return getTime(a.fecha) - getTime(b.fecha)
-        })
-
-        chatMessages.innerHTML = ""
-        messages.forEach((message) => {
-          chatMessages.appendChild(createMessageElement(message))
-        })
-
-        await markMessagesAsRead(messages)
-        scrollToBottom()
-      })
-
-      setupEventListeners()
-    } catch (error) {
-      console.error("Error al inicializar chat:", error)
-      receiverName.textContent = "Error al cargar el chat"
-      messageInput.disabled = true
-      sendButton.disabled = true
+    if (!otherUser) {
+      updateHeader(true);
+      messageInput.disabled = true;
+      sendButton.disabled = true;
+      return;
     }
+
+    updateHeader(false);
+    messageInput.disabled = false;
+    sendButton.disabled = true;
+
+    const waitingContainer = document.getElementById("waiting-container");
+    if (waitingContainer) {
+      waitingContainer.style.display = "block"; // Mostrar contenedor de espera
+    }
+
+    const messagesQuery = query(
+      collection(db, "messages"),
+      where("remitente", "in", [currentUser.uid, otherUser.uid]),
+      where("receptor", "in", [currentUser.uid, otherUser.uid]),
+      orderBy("fecha", "asc")
+    );
+
+    unsubscribeMessages = onSnapshot(messagesQuery, async (snapshot) => {
+      const messages = [];
+      snapshot.forEach((doc) => {
+        messages.push({
+          id: doc.id,
+          ...doc.data(),
+        });
+      });
+
+      if (messages.length === 0) {
+        if (waitingContainer) {
+          waitingContainer.style.display = "block";
+        }
+        chatMessages.innerHTML = ""; // Asegurarse de que no haya mensajes antiguos
+      } else {
+        if (waitingContainer) {
+          waitingContainer.style.display = "none";
+        }
+        // Ordenar y mostrar mensajes
+        chatMessages.innerHTML = "";
+        messages.forEach((message) => {
+          chatMessages.appendChild(createMessageElement(message));
+        });
+
+        await markMessagesAsRead(messages);
+        scrollToBottom();
+      }
+    });
+
+    setupEventListeners();
+  } catch (error) {
+    console.error("Error al inicializar chat:", error);
+    receiverName.textContent = "Error al cargar el chat";
+    messageInput.disabled = true;
+    sendButton.disabled = true;
   }
+};
 
   // Check authentication state
   onAuthStateChanged(auth, (user) => {
     if (user) {
       initializeChat(user)
     } else {
-      window.location.href = "auth/register.html"
+      window.location.href = "register.html"
     }
   })
 })
-

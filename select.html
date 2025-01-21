@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seleccionar Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #ffffff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .chat-list {
+      list-style: none;
+      padding: 0;
+    }
+    .chat-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .chat-item:hover {
+      background-color: #f0f0f0;
+    }
+    .chat-name {
+      font-size: 16px;
+      color: #555;
+    }
+    .chat-status {
+      font-size: 12px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Seleccionar Chat</h1>
+    <ul class="chat-list" id="chat-list">
+      <!-- Chats serán generados dinámicamente aquí -->
+    </ul>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-auth.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js";
+
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtCQA5t7jtQaC3vQVPSjV2UnHpLozVFZE",
+      authDomain: "pinterest-838cd.firebaseapp.com",
+      projectId: "pinterest-838cd",
+      storageBucket: "pinterest-838cd.appspot.com",
+      messagingSenderId: "770794723608",
+      appId: "1:770794723608:web:783166d73901e83eaaa66d",
+      measurementId: "G-LM3V2F46R1"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const chatListElement = document.getElementById("chat-list");
+
+    // Función para cargar la lista de usuarios
+    const loadChatList = async (currentUserId) => {
+      try {
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        usersSnapshot.forEach((doc) => {
+          const user = doc.data();
+          if (user.uid !== currentUserId) {
+            const chatItem = document.createElement("li");
+            chatItem.className = "chat-item";
+            chatItem.innerHTML = `
+              <span class="chat-name">${user.displayName || "Usuario Anónimo"}</span>
+              <span class="chat-status">Activo</span>
+            `;
+            chatItem.addEventListener("click", () => {
+              window.location.href = `chat.html?uid=${user.uid}`;
+            });
+            chatListElement.appendChild(chatItem);
+          }
+        });
+      } catch (error) {
+        console.error("Error al cargar la lista de chats:", error);
+        alert("Hubo un problema al cargar los chats. Intenta de nuevo más tarde.");
+      }
+    };
+
+    // Comprobar autenticación
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadChatList(user.uid);
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+  </script>
+</body>
+</html>
