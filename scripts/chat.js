@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (isWaiting) {
         receiverName.innerHTML = 
-            '<span class="waiting-text" style="color: green;">Esperando un mensaje, ¡vamos! Di "hola!"</span>';
+            '<span class="waiting-text" style="color: white;">Esperando segundo usuario</span>';
         receiverName.classList.add("waiting-animation");
 
         if (waitingContainer) {
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         if (waitingMessage) {
-            waitingMessage.textContent = "Esperando un mensaje, ¡vamos! Di \"hola!\"";
+            waitingMessage.textContent = "Esperando segundo usuario";
         }
     } else {
         receiverName.textContent = otherUser?.displayName || "Chat";
