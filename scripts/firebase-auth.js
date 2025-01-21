@@ -22,6 +22,6 @@ onAuthStateChanged(auth, (user) => {
         window.location.href = "home/chat.html";
     } else {
         // Usuario no autenticado, redirigir a auth/register.html
-        window.location.href = "auth/register.html";
+        window.location.href = "register.html";
     }
 });
