@@ -19,9 +19,9 @@ const auth = getAuth(app);
 onAuthStateChanged(auth, (user) => {
     if (user) {
         // Usuario autenticado, redirigir a home/chat.html
-        window.location.href = "../home/chat.html";
+        window.location.href = "home/chat.html";
     } else {
         // Usuario no autenticado, redirigir a auth/register.html
-        window.location.href = "../auth/register.html";
+        window.location.href = "auth/register.html";
     }
 });
