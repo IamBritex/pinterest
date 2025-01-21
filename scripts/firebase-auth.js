@@ -1,4 +1,3 @@
-// Importar Firebase desde los módulos CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-auth.js";
 
@@ -15,13 +14,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Verificar el estado de autenticación
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        // Usuario autenticado, redirigir a home/chat.html
         window.location.href = "chat.html";
     } else {
-        // Usuario no autenticado, redirigir a auth/register.html
         window.location.href = "register.html";
     }
 });
