@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Solicitar permiso para mostrar notificaciones en el navegador
   const getNotificationToken = async () => {
     try {
-      const token = await getToken(messaging, { vapidKey: 'TU_VAPID_KEY' });
+      const token = await getToken(messaging, { vapidKey: 'BD_Yj2Z23C_xy4p2IWcjPFT6WxxcIQFFbVwQVNJ80kRF5Lg-5YYloLDTGC9mRKkHS9HSJgW1Qbe4c8lGAnYB5NU' });
       if (token) {
         console.log("Token de notificación FCM:", token);
         // Guarda este token en tu base de datos asociado al usuario
